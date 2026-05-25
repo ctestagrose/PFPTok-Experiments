@@ -3,8 +3,8 @@ import os
 import numpy as np
 from transformers import Trainer, get_cosine_with_hard_restarts_schedule_with_warmup
 
-from .Loss_Functions import CombinedFocalLabelSmoothingLoss
-from .Metric_Calculator import MetricsCalculator
+from .loss_functions import CombinedFocalLabelSmoothingLoss
+from .metric_calculator import MetricsCalculator
 import torch
 from collections import defaultdict
 from typing import Any, List, Sequence, Union, Optional

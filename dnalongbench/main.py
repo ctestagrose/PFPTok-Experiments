@@ -9,16 +9,16 @@ from statistics import mean
 import torch
 import numpy as np
 from functools import partial
-from src.Utils.PFPTok import PFPTok
-from src.Utils.Dataset import collate_fn
-from src.Models.bert_model import BERT
-from src.Utils.huggingface_utils import CustomTrainer, compute_metrics
-from src.Utils.data_utils import tokenize_sequences_no_genes, create_dataset, tokenize_sequences_no_genes_eqtl, create_dataset_eqtl
+from utils.pfptok import PFPTok
+from utils.dataset import collate_fn
+from models.bert_model import BERT
+from utils.huggingface_utils import CustomTrainer, compute_metrics
+from utils.data_utils import tokenize_sequences_no_genes, create_dataset, tokenize_sequences_no_genes_eqtl, create_dataset_eqtl
 from transformers import PreTrainedTokenizerFast, TrainingArguments
 import tracemalloc
 import gzip
-from src.Models.hyena_model import HyenaDNAForClassification
-from src.Utils.Hyena_Tokenizer import (
+from models.hyena_model import HyenaDNAForClassification
+from utils.hyena_tokenizer import (
     build_hyena_tokenizer,
     save_hyena_tokenizer,
     load_hyena_tokenizer,

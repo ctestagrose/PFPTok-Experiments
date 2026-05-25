@@ -1,4 +1,4 @@
-from .Dataset import SeqDataset
+from .dataset import SeqDataset
 import json
 from sklearn.model_selection import ShuffleSplit, StratifiedShuffleSplit, train_test_split
 from tqdm import tqdm

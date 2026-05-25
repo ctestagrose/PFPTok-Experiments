@@ -6,8 +6,8 @@ import numpy as np
 import torch
 from transformers import Trainer
 
-from .Loss_Functions import CombinedFocalLabelSmoothingLoss, CombinedFocalLabelSmoothingLossMultiCat
-from .Metric_Calculator import MetricsCalculator
+from .loss_functions import CombinedFocalLabelSmoothingLoss, CombinedFocalLabelSmoothingLossMultiCat
+from .metric_calculator import MetricsCalculator
 
 metrics_calculator = MetricsCalculator()
 

@@ -12,22 +12,22 @@ import numpy as np
 import traceback
 import gc
 
-from ablation_utils.data_prep import DataPreparer
-from ablation_utils.Sequence_Processor import SequenceProcessor
+from utils.data_prep import DataPreparer
+from utils.sequence_processor import SequenceProcessor
 
 
 def _import_unigram():
-    from Tokenizers.Unigram_Tokenizer import TokenizerManagerUnigram
+    from tokenizers.unigram_tokenizer import TokenizerManagerUnigram
     return TokenizerManagerUnigram
 
 
 def _import_bpe():
-    from Tokenizers.BPE_Tokenizer import TokenizerManagerBPE
+    from tokenizers.bpe_tokenizer import TokenizerManagerBPE
     return TokenizerManagerBPE
 
 
 def _import_pfptok():
-    from Tokenizers.PFP_Tokenizer import TokenizerManager
+    from tokenizers.pfp_tokenizer import TokenizerManager
     return TokenizerManager
 
 

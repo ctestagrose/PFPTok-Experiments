@@ -7,14 +7,14 @@ import torch
 import numpy as np
 from functools import partial
 from transformers import TrainingArguments, PreTrainedTokenizerFast
-from src.data_prep import DataPreparer
-from src.Utils.Gene_Manager import GeneManager
-from src.Utils.Sequence_Processor import SequenceProcessor
-from src.Tokenizers.pfp_tokenizer import TokenizerManager
-from src.Utils.Dataset import collate_fn
-from src.Models.bert_model import BERT
-from src.Utils.huggingface_utils import CustomTrainer, compute_metrics, attention_token_importance
-from src.Utils.data_utils import create_dataset, tokenize_sets, create_folds
+from data_prep import DataPreparer
+from utils.gene_manager import GeneManager
+from utils.sequence_processor import SequenceProcessor
+from tokenizers.pfp_tokenizer import TokenizerManager
+from utils.dataset import collate_fn
+from models.bert_model import BERT
+from utils.huggingface_utils import CustomTrainer, compute_metrics, attention_token_importance
+from utils.data_utils import create_dataset, tokenize_sets, create_folds
 import os
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -130,10 +130,10 @@ def setup_and_load_data(args):
     gene_manager = GeneManager(args.gene_file)
     sequence_processor = SequenceProcessor(args.Kmer_Size, args.stride)
     if args.tokenizer_type == 'bpe':
-        from src.Tokenizers.bpe_tokenizer import TokenizerManagerBPE
+        from tokenizers.bpe_tokenizer import TokenizerManagerBPE
         tokenizer_manager = TokenizerManagerBPE(vocab_size=args.bpe_vocab_size)
     elif args.tokenizer_type == 'unigram':
-        from src.Tokenizers.unigram_tokenizer import TokenizerManagerUnigram
+        from tokenizers.unigram_tokenizer import TokenizerManagerUnigram
         tokenizer_manager = TokenizerManagerUnigram(vocab_size=args.bpe_vocab_size)
     else:
         tokenizer_manager = TokenizerManager()

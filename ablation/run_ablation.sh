@@ -14,9 +14,9 @@ if [[ ! "$STUDY_SIZE" =~ ^(quick|focused|comprehensive)$ ]]; then
 fi
 
 # CONFIGURATION — edit these paths for your environment
-SEQUENCE_DIR="./Sample_Data/Train"
-TEST_SEQUENCE_DIR="./Sample_Data/Test"
-TARGET_FILE="./Sample_Data/cryptic_targets_all.json"
+SEQUENCE_DIR="./sample_data/Train"
+TEST_SEQUENCE_DIR="./sample_data/Test"
+TARGET_FILE="./sample_data/cryptic_targets_all.json"
 
 OUTPUT_DIR="./ablation_results/${TOKENIZER_TYPE}_${STUDY_SIZE}_$(date +%Y%m%d_%H%M%S)"
 
@@ -86,7 +86,7 @@ case "${TOKENIZER_TYPE}_${STUDY_SIZE}" in
 esac
 
 
-CMD="python main_ablation.py \
+CMD="python main.py \
     --tokenizer_type $TOKENIZER_TYPE \
     --sequence_dir \"$SEQUENCE_DIR\" \
     --test_sequence_dir \"$TEST_SEQUENCE_DIR\" \

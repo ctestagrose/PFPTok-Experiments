@@ -5,26 +5,28 @@ PFPTok applies prefix-free parsing (PFP) to construct a dictionary-based tokeniz
 
 ```
 PFPTok-Experiments/
-├── Curated_Genes_Experiment/    # MTB AMR classification (curated genes + whole genome)
-│   ├── Data/                    # Phenotypic target labels
-│   └── Scripts/
-│       ├── Config/              # Training, model, and gene configs
-│       ├── src/                 # Models (BERT), tokenizers (PFP/BPE/Unigram), data utils
-│       └── main.py              # Entry point
-├── Ablation_Study/              # Hyperparameter sweeps for all three tokenizers
-│   ├── Sample_Data/             # 10 example MTB isolates (Train/Test splits)
-│   ├── Tokenizers/              # PFP, BPE, Unigram tokenizer implementations
-│   ├── ablation_utils/          # Data loading and sequence processing
+├── curated_genes/               # MTB AMR classification (curated genes + whole genome)
+|   ├── config/                  # Training, model, and gene configs
+│   ├── data/                    # Phenotypic target labels
+│   ├── models/                  # Models (BERT)
+|   ├── utils/                   # Training utils
+|   ├── tokenizers/              # Tokenizers (PFP/BPE/Unigram)
+|   ├── data_prep.py             # Data preperation tools
+│   └── main.py                  # Entry point
+├── ablation/                    # Hyperparameter sweeps for all three tokenizers
+│   ├── sample_data/             # 10 example MTB isolates (Train/Test splits)
+│   ├── tokenizers/              # PFP, BPE, Unigram tokenizer implementations
+│   ├── utils/                   # Data loading and sequence processing
 │   ├── main_ablation.py         # Ablation entry point
 │   └── run_ablation.sh          # Configurable sweep launcher
-├── PFPTok DNALB/                # DNALongBench experiments (eQTL, ETGP)
-│   ├── Config/Model_Configs/    # BERT architecture configs
-│   ├── src/                     # Models (BERT, HyenaDNA), tokenizers, data utils
+├── dnalongbench/                # DNALongBench experiments (eQTL, ETGP)
+│   ├── config/model_configs/    # BERT architecture configs
+│   ├── models/                  # Models (BERT, HyenaDNA)
+│   ├── utils/                   # data utils
 │   ├── main.py                  # Entry point
 │   ├── submit_slurm.sh          # SLURM job script
 │   └── submit_non_slurm.sh      # Local/interactive launch script
-├── requirements.txt
-└── LICENSE                      # MIT
+└── requirements.txt
 ```
 
 ## Installation
@@ -37,25 +39,6 @@ pip install -r requirements.txt
 
 > **Note:** The provided `requirements.txt` was generated from an HPC environment and includes CUDA-specific and local editable packages. You may need to install PyTorch separately for your CUDA version (see [pytorch.org](https://pytorch.org/get-started/locally/)) and remove any `-e /path/to/...` or `@ file:///...` lines before installing.
 
-## Usage
-
-PFPTok expects a list of sequences (strings).
-
-**Tokenizer Training:**
-
-```python
-from PFPTok.src.PFP_Tokenizer import TokenizerManager
-
-sequences = [
-    ["ACGT" * 25, "TGCA" * 25],
-    ["AAAA" * 25, "CCCC" * 25],
-]
-
-tm = TokenizerManager()
-tok = tm.setup_tokenizer(sequences, w=6, d=117)
-```
-
-The `w` parameter controls the PFP window size and `d` controls the hash modulus, which together determine phrase boundaries and dictionary granularity.
 
 ## Experiments
 
@@ -63,18 +46,18 @@ The `w` parameter controls the PFP window size and `d` controls the hash modulus
 
 Antibiotic resistance (AMR) classification on *Mycobacterium tuberculosis* isolates using a curated set of resistance-associated genes. Trains a BERT classifier on PFP-, BPE-, or Unigram-tokenized gene sequences and evaluates via cross-validation.
 
-- **Code:** `Curated_Genes_Experiment/Scripts/`
-- **Data:** Preprocessed isolate data can be downloaded from the [LLMTB repository](https://github.com/ctestagrose/LLMTB/tree/main/Data). Phenotypic targets are in `Curated_Genes_Experiment/Data/cryptic_targets_all.json`.
-- **Configuration:** Edit `Scripts/Config/train_config.json` to set paths, tokenizer type (`pfp`, `bpe`, `unigram`), model hyperparameters, and PFP-specific settings (`pfp_w`, `pfp_d`).
+- **Code:** `curated_genes`
+- **Data:** Preprocessed isolate data can be downloaded from the [LLMTB repository](https://github.com/ctestagrose/LLMTB/tree/main/Data). Phenotypic targets are in `curated_genes/data/cryptic_targets_all.json`.
+- **Configuration:** Edit `curated_genes/config/train_config.json` to set paths, tokenizer type (`pfp`, `bpe`, `unigram`), model hyperparameters, and PFP-specific settings (`pfp_w`, `pfp_d`).
 
 ```bash
-cd Curated_Genes_Experiment/Scripts
+cd curated_genes
 python main.py \
     --sequence_dir /path/to/train_isolates \
     --test_sequence_dir /path/to/test_isolates \
-    --gene_file ./Config/Gene_Configs/genes_important.json \
-    --target_file ../Data/cryptic_targets_all.json \
-    --model_config ./Config/Model_Configs/Base_BERT/base_config_binary.json \
+    --gene_file ./config/gene_configs/genes_important.json \
+    --target_file ./data/cryptic_targets_all.json \
+    --model_config ./config/model_configs/base_bert/base_config_binary.json \
     --tokenizer_type pfp \
     --antibiotic RIF \
     --save_path ./runs/pfp_rif \
@@ -91,9 +74,9 @@ Uses the same pipeline as the curated gene experiments but operates on full geno
 python main.py \
     --sequence_dir /path/to/train_isolates \
     --test_sequence_dir /path/to/test_isolates \
-    --gene_file ./Config/Gene_Configs/genes_important.json \
-    --target_file ../Data/cryptic_targets_all.json \
-    --model_config ./Config/Model_Configs/Base_BERT/base_config_binary.json \
+    --gene_file ./config/gene_configs/genes_important.json \
+    --target_file ./data/cryptic_targets_all.json \
+    --model_config ./config/model_configs/base_bert/base_config_binary.json \
     --tokenizer_type pfp \
     --antibiotic RIF \
     --save_path ./runs/pfp_rif_scaffold \
@@ -104,13 +87,13 @@ python main.py \
 
 Systematic hyperparameter sweeps across all three tokenizers. Measures tokenization statistics (vocab size, compression ratio, token count distributions) and downstream classification performance across parameter grids.
 
-- **Code:** `Ablation_Study/`
+- **Code:** `ablation/`
 - **Sample data:** 10 example MTB isolates are provided in `Sample_Data/` for quick testing.
 
 Update paths in `run_ablation.sh` if needed, then launch a sweep:
 
 ```bash
-cd Ablation_Study
+cd ablation
 bash run_ablation.sh <unigram|bpe|pfptok> <quick|focused|comprehensive>
 ```
 
@@ -125,16 +108,16 @@ Evaluation on the [DNALongBench](https://github.com/rattlesnakey/DNALongBench) b
 > **Note:** It is highly recommended to run these experiments with access to a GPU.
 
 
-- **Code:** `PFPTok DNALB/`
+- **Code:** `dnalongbench/`
 - **Data:** DNALongBench datasets should be preprocessed into JSON splits (train/validation/test) following the format expected by `--use_json_dataset`.
-- **Model configs:** `Config/Model_Configs/Base_BERT/base_config_binary.json`
+- **Model configs:** `config/model_configs/base_bert/base_config_binary.json`
 
 **Running with SLURM:**
 
 Edit `submit_slurm.sh` to set your account, paths, and partition, then:
 
 ```bash
-cd "PFPTok DNALB"
+cd "dnalongbench"
 sbatch submit_slurm.sh
 ```
 
@@ -148,7 +131,7 @@ torchrun --nproc-per-node=1 main.py \
     --batch_size 128 \
     --model_type bert \
     --task eQTL \
-    --model_config ./Config/Model_Configs/Base_BERT/base_config_binary.json \
+    --model_config ./config/model_configs/base_bert/base_config_binary.json \
     --antibiotic binary_json \
     --save_path ./runs/eqtl_whole_blood
 ```
@@ -161,7 +144,7 @@ torchrun --nproc-per-node=1 main.py \
     --json_path /path/to/eQTL_splits/Whole_Blood \
     --model_type hyena \
     --task eQTL \
-    --model_config ./Config/Model_Configs/Base_BERT/base_config_binary.json \
+    --model_config ./config/model_configs/base_bert/base_config_binary.json \
     --antibiotic binary_json \
     --save_path ./runs/eqtl_hyena
 ```

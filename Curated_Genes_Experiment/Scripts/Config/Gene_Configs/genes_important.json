@@ -1,0 +1,15 @@
+{
+  "INH": ["KatG", "inhA", "rpsL", "rpoB", "Rv1140"],
+  "RIF": ["rpoA", "rpoB", "rpoC", "rpoZ", "inhA", "fabG1", "Rv3327","Rv2752c"],
+  "RFB": ["rpoA", "rpoB", "rpoC", "rpoZ", "Rv2752c", "Rv2481c", "csyA3", "embB", "mprA"],
+  "EMB": ["embA", "embB", "embC", "embR", "rmlD", "iniA", "iniC", "manB", "ubiA", "Rv2481c", "rpsL", "Rv3183"],
+  "ETH": ["fabG1", "ethA", "pncA", "Rv1772", "ethR", "inhA", "mshA", "Rv3083", "Rv0565c"],
+  "LEV": ["gyrA", "gyrB", "rpoB", "embB"],
+  "MXF": ["gyrA", "gyrB", "rpoB", "embB"],
+  "KAN": ["rrs", "eis", "ccsA", "whiB6", "whiB7", "aftB", "fprA", "pncA", "ethA", "fabG1", "Rv2348c"],
+  "AMI": ["rrs", "eis", "ccsA", "whiB6", "whiB7", "aftB", "fprA", "Rv1830", "Rv0209", "Rv1362c", "fabG1"],
+  "DLM": ["fgd1", "fbiA", "fbiB", "fbiC", "fbiD", "Rv3249c", "ddn", "Rv3430a", "fabG1"],
+  "LZD": ["rrl", "rplC", "Rv1371", "lprA", "Rv3249c", "rpoB"],
+  "CFZ": ["Rv1979c", "pepQ", "Rv0678", "mmpL5", "mmpS5", "Rv3249c", "rpoB", "atpE", "Rv3183", "Rv2390c", "Rv3327"],
+  "BDQ": ["atpE", "Rv0678", "mmpL5", "mmpS5", "pepQ", "Rv3249c", "rpoB", "clpC2", "whiB7", "Rv2019", "Rv0332"]
+ }

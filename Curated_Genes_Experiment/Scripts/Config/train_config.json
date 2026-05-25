@@ -1,0 +1,23 @@
+{
+    "sequence_dir": "/blue/boucher/share/MTB_LLM/IR_Variable_FIRST_Isolates",
+    "gene_file": "./Config/Gene_Configs/genes_important.json",
+    "target_file": "/blue/boucher/share/MTB_LLM/LLMTB_HF/Data/cryptic_targets_all.json",
+    "test_sequence_dir": "/blue/boucher/share/MTB_LLM/IR_Variable_OTHER_Isolates",
+    "num_epochs": 50,
+    "batch_size": 128,
+    "stride": 20000000,
+    "Kmer_Size": 20000000,
+    "use_holdout": true,
+    "use_gene_file": true,
+    "model_config": "./Config/Model_Configs/Base_BERT/base_config_binary.json",
+    "antibiotic": "All",
+    "save_path": "./Trained_Models/Pub_Check_BPE",
+    "tokenizer_type": "bpe",
+    "bpe_vocab_size": 100000,
+    "bpe_min_frequency": 5,
+    "use_scaffolds": false,
+    "scaffold_concat": false,
+    "pfp_w": 3,
+    "pfp_d": 227
+}
+

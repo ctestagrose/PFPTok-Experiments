@@ -1,0 +1,23 @@
+name: pfp-tok
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - psutil
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  - transformers
+  - tokenizers
+  - scikit-learn
+  - scipy
+  - tqdm
+  - einops
+  - accelerate

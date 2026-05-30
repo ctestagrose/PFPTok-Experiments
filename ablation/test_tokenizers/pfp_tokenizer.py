@@ -33,13 +33,13 @@ def generate_all_kmers(k, alphabet='ATCGN'):
     return all_kmers
 
 
-def prefix_free_parse(sequence: str, w: int = 10, d: int = 127, use_simple_hash: bool = True):
+def prefix_free_parse(sequence: str, w: int = 10, p: int = 127, use_simple_hash: bool = True):
     n = len(sequence)
     triggers = []
 
     if use_simple_hash:
         h = karp_rabin_hash(sequence[:w])
-        if h % d == 0:
+        if h % p == 0:
             triggers.append(0)
 
         power = pow(_BASE, w - 1, _MOD)
@@ -51,13 +51,13 @@ def prefix_free_parse(sequence: str, w: int = 10, d: int = 127, use_simple_hash:
             h = (h - left_val * power) % _MOD
             h = (h * _BASE + right_val) % _MOD
 
-            if h % d == 0:
+            if h % p == 0:
                 triggers.append(i)
 
     else:
         for i in range(n - w + 1):
             window = sequence[i: i + w]
-            if md5_hash(window) % d == 0:
+            if md5_hash(window) % p == 0:
                 triggers.append(i)
 
     if not triggers or triggers[0] != 0:
@@ -84,10 +84,10 @@ def prefix_free_parse(sequence: str, w: int = 10, d: int = 127, use_simple_hash:
 
 
 class TokenizerManager:
-    def __init__(self, vocab_size=None, w=3, d=117):
+    def __init__(self, vocab_size=None, w=3, p=117):
         self.vocab_size = vocab_size
         self.w = w
-        self.d = d
+        self.p = p
         self.k = 6
         self.special_tokens = []
         self.phrase_freq: dict[str, int] = {}
@@ -123,11 +123,11 @@ class TokenizerManager:
             self,
             sequences,
             w,
-            d
+            p
     ):
         self.w = w
-        self.d = d
-        print(f"W: {w}, P: {d}")
+        self.p = p
+        print(f"W: {w}, P: {p}")
         self.special_tokens = ["[CLS]", "[SEP]", "[PAD]", "[MASK]", "[UNK]", "[INTB]", "[INTA]", "[GENE]"]
 
         freq = Counter()
@@ -136,7 +136,7 @@ class TokenizerManager:
         for seq in tqdm(sequences, desc=f"Setting up tokenizer with {len(sequences)} sequences"):
             for gene in seq:
                 if gene not in self.special_tokens:
-                    phrases = prefix_free_parse(gene, self.w, self.d)
+                    phrases = prefix_free_parse(gene, self.w, self.p)
                     freq.update(phrases)
                     all_phrases.update(phrases)
 
@@ -193,7 +193,7 @@ class TokenizerManager:
             encoded = []
 
             if gene not in excluded:
-                phrases = prefix_free_parse(gene, self.w, self.d)
+                phrases = prefix_free_parse(gene, self.w, self.p)
 
                 for phrase in phrases:
                     if not phrase:

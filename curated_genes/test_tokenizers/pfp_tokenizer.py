@@ -18,12 +18,12 @@ def karp_rabin_hash(window: str) -> int:
     return h
 
 
-def prefix_free_parse(sequence: str, w: int = 10, d: int = 127) -> List[str]:
+def prefix_free_parse(sequence: str, w: int = 10, p: int = 127) -> List[str]:
     n = len(sequence)
     triggers = []
 
     h = karp_rabin_hash(sequence[:w])
-    if h % d == 0:
+    if h % p == 0:
         triggers.append(0)
 
     power = pow(_BASE, w - 1, _MOD)
@@ -32,7 +32,7 @@ def prefix_free_parse(sequence: str, w: int = 10, d: int = 127) -> List[str]:
         right_val = _CHAR_MAP.get(sequence[i + w - 1], 0)
         h = (h - left_val * power) % _MOD
         h = (h * _BASE + right_val) % _MOD
-        if h % d == 0:
+        if h % p == 0:
             triggers.append(i)
 
     # Ensure start and end are included
@@ -59,10 +59,10 @@ def prefix_free_parse(sequence: str, w: int = 10, d: int = 127) -> List[str]:
 
 class TokenizerManager:
 
-    def __init__(self, vocab_size=None, w=3, d=117):
+    def __init__(self, vocab_size=None, w=3, p=117):
         self.vocab_size = vocab_size
         self.w = w
-        self.d = d
+        self.p = p
         self.k = 6  # k-mer size for fallback
         self.special_tokens = []
         self.tokenizer = None
@@ -84,14 +84,14 @@ class TokenizerManager:
 
         return vocab
 
-    def setup_tokenizer(self, sequences, w, d, *,
+    def setup_tokenizer(self, sequences, w, p, *,
                         min_count_uncommon: int = 2,
                         rare_quantile: float = 0.20):
         self.w = w
-        self.d = d
+        self.p = p
         self.min_count_uncommon = min_count_uncommon
         self.rare_quantile = rare_quantile
-        print(f"PFP parameters — W: {w}, D: {d}")
+        print(f"PFP parameters — W: {w}, P: {p}")
 
         self.special_tokens = [
             "[CLS]", "[SEP]", "[PAD]", "[MASK]", "[UNK]",
@@ -103,7 +103,7 @@ class TokenizerManager:
         for seq in tqdm(sequences, desc="Building PFP vocabulary"):
             for gene in seq:
                 if gene not in self.special_tokens:
-                    phrases = prefix_free_parse(gene, self.w, self.d)
+                    phrases = prefix_free_parse(gene, self.w, self.p)
                     freq.update(phrases)
                     all_phrases.update(phrases)
 
@@ -169,7 +169,7 @@ class TokenizerManager:
             encoded = []
 
             if gene not in excluded:
-                phrases = prefix_free_parse(gene, self.w, self.d)
+                phrases = prefix_free_parse(gene, self.w, self.p)
 
                 for phrase in phrases:
                     if not phrase:

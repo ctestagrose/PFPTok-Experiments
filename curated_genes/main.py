@@ -10,7 +10,7 @@ from transformers import TrainingArguments, PreTrainedTokenizerFast
 from data_prep import DataPreparer
 from utils.gene_manager import GeneManager
 from utils.sequence_processor import SequenceProcessor
-from tokenizers.pfp_tokenizer import TokenizerManager
+from test_tokenizers.pfp_tokenizer import TokenizerManager
 from utils.dataset import collate_fn
 from models.bert_model import BERT
 from utils.huggingface_utils import CustomTrainer, compute_metrics, attention_token_importance
@@ -21,7 +21,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def parse_arguments():
-    with open('./Config/train_config.json', 'r') as f:
+    with open('./config/train_config.json', 'r') as f:
         file_args = json.load(f)
 
     parser = argparse.ArgumentParser(description='Train a BERT model for MTB Antibiotic Resistance.')
@@ -67,7 +67,7 @@ def parse_arguments():
 
     # PFP tokenizer parameters
     parser.add_argument('--pfp_w', type=int, default=30, help='PFP window size')
-    parser.add_argument('--pfp_d', type=int, default=227, help='PFP hash divisor')
+    parser.add_argument('--pfp_p', type=int, default=227, help='PFP hash period')
 
     # BPE/Unigram tokenizer parameters
     parser.add_argument('--bpe_vocab_size', type=int, default=100000,
@@ -130,10 +130,10 @@ def setup_and_load_data(args):
     gene_manager = GeneManager(args.gene_file)
     sequence_processor = SequenceProcessor(args.Kmer_Size, args.stride)
     if args.tokenizer_type == 'bpe':
-        from tokenizers.bpe_tokenizer import TokenizerManagerBPE
+        from test_tokenizers.bpe_tokenizer import TokenizerManagerBPE
         tokenizer_manager = TokenizerManagerBPE(vocab_size=args.bpe_vocab_size)
     elif args.tokenizer_type == 'unigram':
-        from tokenizers.unigram_tokenizer import TokenizerManagerUnigram
+        from test_tokenizers.unigram_tokenizer import TokenizerManagerUnigram
         tokenizer_manager = TokenizerManagerUnigram(vocab_size=args.bpe_vocab_size)
     else:
         tokenizer_manager = TokenizerManager()
@@ -189,13 +189,19 @@ def load_test_data(args, gene_manager, sequence_processor, tokenizer_manager):
     test_seq_ids = [seq_id for _, _, seq_id, _ in zipped_test_data]
     test_genes_list = [genes for _, _, _, genes in zipped_test_data]
 
-    _, test_prepped_seqs, test_prepped_labels = sequence_processor.extract_and_prep_genes(test_sequences, test_labels_raw)
+    if getattr(args, 'tokenizer_type', 'pfp') == 'pfp' and getattr(args, 'use_scaffolds', False):
+        test_prepped_seqs = [[[seq[0]]] for seq in test_sequences]
+        test_prepped_labels = test_labels_raw
+    else:
+        _, test_prepped_seqs, test_prepped_labels = sequence_processor.extract_and_prep_genes(
+            test_sequences, test_labels_raw
+        )
 
     return test_prepped_seqs, test_prepped_labels, test_seq_ids, test_genes_list
 
 
 # Tokenization and Wrapping
-def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, d, args, save_path):
+def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, p, args, save_path):
     sequence_processor = SequenceProcessor(args.Kmer_Size, args.stride)
     print(f"Setting up {args.tokenizer_type.upper()} tokenizer...")
 
@@ -228,7 +234,7 @@ def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, d, args, save_
         else:
             # PFP tokenizer
             tokenizer = tokenizer_manager.setup_tokenizer(
-                full_set_seqs, w, d,
+                full_set_seqs, w, p,
                 min_count_uncommon=getattr(args, 'min_count_uncommon', 2),
                 rare_quantile=getattr(args, 'rare_quantile', 0.20)
             )
@@ -493,7 +499,7 @@ def main():
     for antibiotic in antibiotics:
         print(f"\n{'=' * 10} Processing Antibiotic: {antibiotic} {'=' * 10}")
         w = args.pfp_w
-        d = args.pfp_d
+        p = args.pfp_p
         args.antibiotic = antibiotic
 
         # 1. Setup, Load Train/Val Data
@@ -513,7 +519,7 @@ def main():
 
         # 3. Setup Tokenizer
         wrapped_tokenizer, vocab_size, tokenizer_manager = setup_tokenizer_and_wrap(
-            tokenizer_manager, full_set_seqs, w, d, args, save_path
+            tokenizer_manager, full_set_seqs, w, p, args, save_path
         )
 
         if has_test_data:
@@ -525,9 +531,15 @@ def main():
         all_sequences = [seq for seq, _, _, _ in zipped_data]
         all_seq_ids = [seq_id for _, _, seq_id, _ in zipped_data]
         all_genes_list = [genes for _, _, _, genes in zipped_data]
-        _, all_prepped_seqs, all_prepped_labels = sequence_processor.extract_and_prep_genes(
-            all_sequences, all_labels_raw
-        )
+        if args.tokenizer_type == 'pfp' and args.use_scaffolds:
+            # PFP tokenizes raw sequences directly; k-mer extraction would
+            # reduce each genome to a single 31-mer, producing only UNK tokens.
+            all_prepped_seqs = [[[seq[0]]] for seq in all_sequences]
+            all_prepped_labels = all_labels_raw
+        else:
+            _, all_prepped_seqs, all_prepped_labels = sequence_processor.extract_and_prep_genes(
+                all_sequences, all_labels_raw
+            )
 
         tokenizer_for_encoding = wrapped_tokenizer
 

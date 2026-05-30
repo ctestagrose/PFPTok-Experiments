@@ -20,11 +20,8 @@ cycler==0.12.1
 datasets==4.0.0
 deprecation==2.1.0
 dill==0.3.8
-dropout_layer_norm @ file:///blue/boucher/testagroseconrad/Emerging/hyena-dna/flash-attention/csrc/layer_norm
 einops==0.8.1
 filelock==3.13.1
-# Editable install with no version control (flash_attn==1.0.7)
--e /blue/boucher/testagroseconrad/Emerging/hyena-dna/flash-attention
 fonttools==4.59.0
 frozenlist==1.7.0
 fsspec==2024.6.1

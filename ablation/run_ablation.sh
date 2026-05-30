@@ -13,10 +13,12 @@ if [[ ! "$STUDY_SIZE" =~ ^(quick|focused|comprehensive)$ ]]; then
     exit 1
 fi
 
-# CONFIGURATION — edit these paths for your environment
-SEQUENCE_DIR="./sample_data/Train"
-TEST_SEQUENCE_DIR="./sample_data/Test"
-TARGET_FILE="./sample_data/cryptic_targets_all.json"
+# CONFIGURATION: edit these three paths before running
+# Default paths point to the bundled sample data for quick testing.
+# For full experiments, replace with your actual data directories.
+SEQUENCE_DIR="../sample_data/ablation_and_whole_genome_sample_data/train"
+TEST_SEQUENCE_DIR="../sample_data/ablation_and_whole_genome_sample_data/test"
+TARGET_FILE="../sample_data/cryptic_targets_all.json"
 
 OUTPUT_DIR="./ablation_results/${TOKENIZER_TYPE}_${STUDY_SIZE}_$(date +%Y%m%d_%H%M%S)"
 
@@ -71,16 +73,16 @@ case "${TOKENIZER_TYPE}_${STUDY_SIZE}" in
     # PFPTOK
     pfptok_quick)
         W_VALUES="5 10"
-        D_VALUES="63 127 255"
+        P_VALUES="63 127 255"
         ;;
     pfptok_focused)
         W_VALUES="2000"
-        D_VALUES="255 511 1021 4096"
+        P_VALUES="255 511 1021 4096"
         NUM_SEQUENCES=1000
         ;;
     pfptok_comprehensive)
         W_VALUES="3 5 10 20 50 75 100 250 500 750 1000 1500 2000"
-        D_VALUES="31 63 127 255 511 1021 4096"
+        P_VALUES="31 63 127 255 511 1021 4096"
         NUM_SEQUENCES=10
         ;;
 esac
@@ -121,7 +123,7 @@ case "$TOKENIZER_TYPE" in
     pfptok)
         CMD="$CMD \
             --w_values $W_VALUES \
-            --d_values $D_VALUES"
+            --p_values $P_VALUES"
         ;;
 esac
 

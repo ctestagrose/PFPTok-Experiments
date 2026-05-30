@@ -1,36 +1,45 @@
 #!/bin/sh
-#SBATCH --job-name=dnalongbenchberteqtlnoval
-#SBATCH --account=simone.marini
-#SBATCH --qos=simone.marini
+#SBATCH --job-name=pfptok_dnalongbench
+#SBATCH --account=YOUR_ACCOUNT
+#SBATCH --qos=YOUR_QOS
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=testagroseconrad@ufl.edu
+#SBATCH --mail-user=YOUR_EMAIL
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64gb
-#SBATCH --gres=gpu:b200:1
-#SBATCH --partition=hpg-b200
+#SBATCH --gres=gpu:1
+#SBATCH --partition=YOUR_PARTITION
 #SBATCH --time=72:00:00
 #SBATCH --output=slurm_logs/%j_disp.log
 #SBATCH --error=slurm_logs/%j_disp.err
 
+# CONFIGURATION: edit these paths before submitting
+# Root directory containing per-tissue eQTL split folders,
+# or the single ETGP folder. Each split folder must contain
+# <NAME>_train.jsonl.gz, <NAME>_valid.jsonl.gz, <NAME>_test.jsonl.gz
+JSON_ROOT="/path/to/your/DNALongBench/data"
 
-module load cuda
-module load mamba 
+# Model config (no edit needed if running from dnalongbench/)
+MODEL_CONFIG="./config/model_configs/base_bert/base_config_binary.json"
 
-mamba activate hyena-dna
+# Where to write results. Two subdirs will be created:
+# one for unordered tokenization, one for ordered.
+SAVE_ROOT_UNORDERED="./runs/eqtl_unordered"
+SAVE_ROOT_ORDERED="./runs/eqtl_ordered"
+
+# Task: eQTL or ETGP
+TASK="eQTL"
+
+# Model type: bert or hyena
+MODEL_TYPE="bert"
+
+# Activate your environment here (adjust for conda/venv/module):
+# module load cuda
+# conda activate your_env
 
 set -euo pipefail
-
 export TQDM_DISABLE=1
-
-JSON_ROOT="/blue/boucher/testagroseconrad/DNALONGBENCH/Data/eQTL_Splits_DNALBFF"
-MODEL_CONFIG="/blue/boucher/testagroseconrad/DNALONGBENCH/Experiments/Config/Model_Configs/Base_BERT/base_config_binary.json"
-
-SAVE_ROOT_UNORDERED="/blue/boucher/testagroseconrad/DNALONGBENCH/Experiments/runs/Faithful_Runs/eQTL_PFPBERT_w20_d4090_Unordered_Faithful_Hyena_Comp_All_No_Validation"
-SAVE_ROOT_ORDERED="/blue/boucher/testagroseconrad/DNALONGBENCH/Experiments/runs/Faithful_Runs/eQTL_PFPBERT_w20_d4090_Ordered_Faithful"
-
-TASK="eQTL" 
 
 if [[ "$TASK" == "ETGP" ]]; then
   SPLITS=(
@@ -52,10 +61,10 @@ fi
 
 for name in "${SPLITS[@]}"; do
   if [[ "$TASK" == "ETGP" ]]; then
-     json_path="${JSON_ROOT}"
+    json_path="${JSON_ROOT}"
   else
-     json_path="${JSON_ROOT}/${name}"
-  fi    
+    json_path="${JSON_ROOT}/${name}"
+  fi
 
   echo "--- ${name} ---"
 
@@ -65,11 +74,11 @@ for name in "${SPLITS[@]}"; do
     --json_path "${json_path}/${name}" \
     --num_epochs 20 \
     --batch_size 128 \
-    --model_type "bert" \
+    --model_type "${MODEL_TYPE}" \
     --task "${TASK}" \
     --model_config "${MODEL_CONFIG}" \
     --antibiotic "binary_json" \
-    --save_path "${SAVE_ROOT_UNORDERED}/${name}" \
+    --save_path "${SAVE_ROOT_UNORDERED}/${name}"
 
   mkdir -p "${SAVE_ROOT_ORDERED}/${name}/"
   torchrun --nproc-per-node=1 --master-port=12875 main.py \
@@ -77,10 +86,10 @@ for name in "${SPLITS[@]}"; do
     --json_path "${json_path}/${name}" \
     --num_epochs 20 \
     --batch_size 128 \
-    --model_type "bert" \
+    --model_type "${MODEL_TYPE}" \
     --task "${TASK}" \
     --model_config "${MODEL_CONFIG}" \
     --antibiotic "binary_json" \
     --save_path "${SAVE_ROOT_ORDERED}/${name}" \
-    --ordered 
+    --ordered
 done

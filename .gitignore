@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# PyTorch / ML checkpoints & outputs
+*.pt
+*.pth
+*.ckpt
+runs/
+ablation_results/
+wandb/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data (large external datasets — sample_data is intentionally kept)
+data/raw/
+*.h5
+*.hdf5
+*.pkl
+*.npy
+*.npz
+
+# Tokenizer artifacts
+tokenizer_cache/
+saved_tokenizers/
+
+# HPC job artifacts
+*.out
+*.err
+slurm-*.out

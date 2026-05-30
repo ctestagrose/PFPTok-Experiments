@@ -98,7 +98,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, d, args, save_path):
+def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, p, args, save_path):
     if args.model_type.lower() == "bert":
         print("Setting up tokenizer...")
         tokenizer_path = os.path.join(save_path, "tokenizer.json")
@@ -107,7 +107,7 @@ def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, d, args, save_
             raw_tokenizer = tokenizer_manager.load_tokenizer(tokenizer_path)
         else:
             print("Training PFP tokenizer...")
-            raw_tokenizer = tokenizer_manager.setup_tokenizer(full_set_seqs, w=w, d=d)
+            raw_tokenizer = tokenizer_manager.setup_tokenizer(full_set_seqs, w=w, p=p)
             tokenizer_manager.save_tokenizer(raw_tokenizer, tokenizer_path)
             print(f"Tokenizer saved to {tokenizer_path}")
 
@@ -332,7 +332,7 @@ def main():
     if args.use_json_dataset:
         args.antibiotic = "binary_json"
         w = 100
-        d = 4096
+        p = 4096
 
         train_temp = load_jsonl_gz(args.json_path + "_train.jsonl.gz")
         val_temp = load_jsonl_gz(args.json_path + "_valid.jsonl.gz")
@@ -448,7 +448,7 @@ def main():
             wrapped_tokenizer, vocab_size = setup_tokenizer_and_wrap(
                 tokenizer_manager=pfp_tokenizer,
                 full_set_seqs=order_dict[amount],
-                w=w, d=d,
+                w=w, p=p,
                 args=args,
                 save_path=save_path
             )

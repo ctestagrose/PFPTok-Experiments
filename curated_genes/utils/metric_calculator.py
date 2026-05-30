@@ -40,6 +40,7 @@ class MetricsCalculator:
     def calculate_metrics_threshold(self, final_labels, final_predictions=None,
                                      final_probabilities=None, target_format="binary"):
         average_type = "macro" if target_format == "multi-cat" else "binary"
+        best_threshold = 0.5
 
         if final_predictions is None and final_probabilities is not None:
             if target_format == "multi-cat":

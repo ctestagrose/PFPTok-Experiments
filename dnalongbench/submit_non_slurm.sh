@@ -1,17 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-module load cuda
-module load mamba 
+# CONFIGURATION: edit these paths before running
+# Root directory containing per-tissue eQTL split folders,
+# or the single ETGP folder. Each split folder must contain
+# <NAME>_train.jsonl.gz, <NAME>_valid.jsonl.gz, <NAME>_test.jsonl.gz
+JSON_ROOT="/path/to/your/DNALongBench/data"
 
-mamba activate hyena-dna
+# Model config (no edit needed if running from dnalongbench/)
+MODEL_CONFIG="./config/model_configs/base_bert/base_config_binary.json"
 
-JSON_ROOT="/blue/boucher/testagroseconrad/DNALONGBENCH/Data/eQTL_Splits_DNALBFF"
-MODEL_CONFIG="/blue/boucher/testagroseconrad/DNALONGBENCH/Experiments/Config/Model_Configs/Base_BERT/base_config_binary.json"
-SAVE_ROOT_UNORDERED="/blue/boucher/testagroseconrad/DNALONGBENCH/Experiments/runs/Faithful_Runs/eQTL_PFPBERT_w20_d4090_Unordered_Faithful_Hyena_Comp_All_No_Validation"
-SAVE_ROOT_ORDERED="/blue/boucher/testagroseconrad/DNALONGBENCH/Experiments/runs/Faithful_Runs/eQTL_PFPBERT_w20_d4090_Ordered_Faithful"
+# Where to write results
+SAVE_ROOT_UNORDERED="./runs/eqtl_unordered"
+SAVE_ROOT_ORDERED="./runs/eqtl_ordered"
 
-TASK="eQTL" 
+# Task: eQTL or ETGP
+TASK="eQTL"
+
+# Model type: bert or hyena
+MODEL_TYPE="bert"
+
+# Activate your environment here if needed, e.g.
+# conda activate your_env
+# source venv/bin/activate
 
 if [[ "$TASK" == "ETGP" ]]; then
   SPLITS=(
@@ -33,10 +44,10 @@ fi
 
 for name in "${SPLITS[@]}"; do
   if [[ "$TASK" == "ETGP" ]]; then
-     json_path="${JSON_ROOT}"
+    json_path="${JSON_ROOT}"
   else
-     json_path="${JSON_ROOT}/${name}"
-  fi    
+    json_path="${JSON_ROOT}/${name}"
+  fi
 
   echo "--- ${name} ---"
 
@@ -46,11 +57,11 @@ for name in "${SPLITS[@]}"; do
     --json_path "${json_path}/${name}" \
     --num_epochs 50 \
     --batch_size 128 \
-    --model_type "bert" \
+    --model_type "${MODEL_TYPE}" \
     --task "${TASK}" \
     --model_config "${MODEL_CONFIG}" \
     --antibiotic "binary_json" \
-    --save_path "${SAVE_ROOT_UNORDERED}/${name}" \
+    --save_path "${SAVE_ROOT_UNORDERED}/${name}"
 
   mkdir -p "${SAVE_ROOT_ORDERED}/${name}/"
   torchrun --nproc-per-node=1 --master-port=12875 main.py \
@@ -58,10 +69,10 @@ for name in "${SPLITS[@]}"; do
     --json_path "${json_path}/${name}" \
     --num_epochs 20 \
     --batch_size 128 \
-    --model_type "bert" \
+    --model_type "${MODEL_TYPE}" \
     --task "${TASK}" \
     --model_config "${MODEL_CONFIG}" \
     --antibiotic "binary_json" \
     --save_path "${SAVE_ROOT_ORDERED}/${name}" \
-    --ordered 
+    --ordered
 done

@@ -17,17 +17,17 @@ from utils.sequence_processor import SequenceProcessor
 
 
 def _import_unigram():
-    from tokenizers.unigram_tokenizer import TokenizerManagerUnigram
+    from test_tokenizers.unigram_tokenizer import TokenizerManagerUnigram
     return TokenizerManagerUnigram
 
 
 def _import_bpe():
-    from tokenizers.bpe_tokenizer import TokenizerManagerBPE
+    from test_tokenizers.bpe_tokenizer import TokenizerManagerBPE
     return TokenizerManagerBPE
 
 
 def _import_pfptok():
-    from tokenizers.pfp_tokenizer import TokenizerManager
+    from test_tokenizers.pfp_tokenizer import TokenizerManager
     return TokenizerManager
 
 
@@ -78,7 +78,7 @@ def parse_arguments():
 
     # PFPTok-specific
     parser.add_argument("--w_values", type=int, nargs="+", default=[3, 5, 10, 15, 20])
-    parser.add_argument("--d_values", type=int, nargs="+", default=[31, 63, 127, 255, 511])
+    parser.add_argument("--p_values", type=int, nargs="+", default=[31, 63, 127, 255, 511])
 
     return parser.parse_args()
 
@@ -224,7 +224,7 @@ def _gen_configs_bpe(args):
 
 
 def _gen_configs_pfptok(args):
-    return [dict(w=w, d=d) for w in args.w_values for d in args.d_values]
+    return [dict(w=w, p=p) for w in args.w_values for p in args.p_values]
 
 
 GENERATE_CONFIGS = {
@@ -365,7 +365,7 @@ def _run_pfptok(config, data, args):
 
     def train_fn():
         tm = TokenizerCls()
-        tok = tm.setup_tokenizer(sequences=train_full, w=config["w"], d=config["d"])
+        tok = tm.setup_tokenizer(sequences=train_full, w=config["w"], p=config["p"])
         return tm, tok
 
     t0 = time.time()
@@ -510,7 +510,7 @@ _PRIORITY_COLS = {
         "compression_ratio_diff", "unk_percentage_diff", "status",
     ],
     "pfptok": [
-        "w", "d", "actual_vocab_size",
+        "w", "p", "actual_vocab_size",
         "training_time_sec", "memory_used_mb",
         "train_avg_tokens", "train_compression_ratio", "train_unk_percentage",
         "test_avg_tokens", "test_compression_ratio", "test_unk_percentage",
@@ -527,13 +527,13 @@ def save_pfptok_nt_per_token(results, output_dir):
         cfg = r["config"]
         rows.append({
             "w": cfg["w"],
-            "d": cfg["d"],
+            "p": cfg["p"],
             "vocab_size": r.get("actual_vocab_size"),
             "train_nt_per_token": round(r.get("train_compression_ratio", 0), 4),
             "test_nt_per_token": round(r.get("test_compression_ratio", 0), 4),
             "train_test_diff": round(r.get("compression_ratio_diff", 0), 4),
         })
-    rows.sort(key=lambda x: (x["w"], x["d"]))
+    rows.sort(key=lambda x: (x["w"], x["p"]))
     path = os.path.join(output_dir, "pfptok_nt_per_token.json")
     with open(path, "w") as f:
         json.dump(rows, f, indent=2)
@@ -653,7 +653,7 @@ def main():
         print(f" * Stride sizes:     {args.stride_sizes}")
     elif tt == "pfptok":
         print(f" * Window sizes (w): {args.w_values}")
-        print(f" * Period values (d): {args.d_values}")
+        print(f" * P values (p): {args.p_values}")
     print(f" * Num sequences:  {args.num_sequences or 'all'}")
     print(f" * Output directory: {args.output_dir}")
 

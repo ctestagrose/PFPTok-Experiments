@@ -2,8 +2,6 @@ import hashlib
 from tokenizers import Tokenizer, models, pre_tokenizers
 from tqdm import tqdm
 from collections import Counter
-import numpy as np
-
 _CHAR_MAP = {'A': 1, 'C': 2, 'G': 3, 'T': 4, 'N': 5}
 _BASE = 5
 _MOD = (1 << 61) - 1

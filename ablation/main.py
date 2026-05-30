@@ -591,7 +591,7 @@ def save_results(results, output_dir, tokenizer_type):
 
             if "compression_ratio_diff" in best:
                 best_gen = min(successful, key=lambda x: x.get("compression_ratio_diff", float("inf")))
-                f.write(f"Best generalization (smallest compression diff):\n")
+                f.write("Best generalization (smallest compression diff):\n")
                 f.write(f" * Config: {best_gen['config']}\n")
                 f.write(f" * Diff: {best_gen['compression_ratio_diff']:.4f}\n")
     print(f" * Saved summary -> {sp}")

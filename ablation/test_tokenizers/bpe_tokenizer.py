@@ -3,12 +3,10 @@ import os
 import random
 from collections import Counter
 from typing import Dict
-from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+from tokenizers import Tokenizer, models, trainers, pre_tokenizers, Regex
 from tokenizers.processors import TemplateProcessing
 from transformers import PreTrainedTokenizerFast
 from tqdm import tqdm
-
-from tokenizers import Tokenizer, models, trainers, pre_tokenizers, Regex
 
 DNA_ALPHABET = list("ACGTN")
 

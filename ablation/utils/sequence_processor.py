@@ -69,12 +69,9 @@ class SequenceProcessor:
     def get_full_set(self, full_set_seqs):
         complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}
         unique_mers = set()
-        prepped_seqs = []
-        prepped_labels = []
         minimizer_size = 0
-        
+
         for item in full_set_seqs:
-            prepped_item = []
             for sequence in item:
                 prepped_seq = []
                 if "N" in sequence:

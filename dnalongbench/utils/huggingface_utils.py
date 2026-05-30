@@ -1,13 +1,10 @@
 from collections import Counter
-import os
 import numpy as np
-from transformers import Trainer, get_cosine_with_hard_restarts_schedule_with_warmup
+from transformers import Trainer
 
 from .loss_functions import CombinedFocalLabelSmoothingLoss
 from .metric_calculator import MetricsCalculator
 import torch
-from collections import defaultdict
-from typing import Any, List, Sequence, Union, Optional
 
 
 metrics_calculator = MetricsCalculator()
@@ -50,8 +47,6 @@ class CustomTrainer(Trainer):
          super().__init__(*args, **kwargs)
          self.target_format = target_format
 
-         device = self.args.device
-
          label_counts = Counter(train_labels)
          neg_counts = label_counts.get(0, 0)
          pos_counts = label_counts.get(1, 0)
@@ -90,9 +85,12 @@ class CustomTrainer(Trainer):
 
 
 def _as_seq_list(x):
-    if x is None: return []
-    if isinstance(x, torch.Tensor): return x.detach().cpu().tolist()
-    if isinstance(x, np.ndarray):   return x.tolist()
+    if x is None:
+        return []
+    if isinstance(x, torch.Tensor):
+        return x.detach().cpu().tolist()
+    if isinstance(x, np.ndarray):
+        return x.tolist()
     if isinstance(x, list):
         if len(x) and isinstance(x[0], torch.Tensor):
             return [t.detach().cpu().tolist() for t in x]

@@ -1,10 +1,8 @@
 import argparse
 import json
 import os
-import glob
 import time
 import random
-from collections import defaultdict
 from statistics import mean
 import torch
 import numpy as np
@@ -222,8 +220,8 @@ def train_fold_logic(fold_num, train_fold_data, val_fold_data, model_config, voc
 
         print(f"Starting training for Fold {fold_num + 1}...")
     else:
-        neg_count = sum(1 for l in train_labels if l == 0)
-        pos_count = sum(1 for l in train_labels if l == 1)
+        neg_count = sum(1 for lbl in train_labels if lbl == 0)
+        pos_count = sum(1 for lbl in train_labels if lbl == 1)
         pos_weight = neg_count / pos_count
         print(f"HyenaDNA pos_weight = {pos_weight:.3f} ({neg_count} neg / {pos_count} pos)")
 
@@ -481,12 +479,8 @@ def main():
             target_format = "binary"
             
             if args.task != "eQTL":
-                train_dataset = create_dataset(tr_tok, target_format)
-                val_dataset = create_dataset(va_tok, target_format)
                 test_dataset = create_dataset(te_tok, target_format) if te_tok else None
             else:
-                train_dataset = create_dataset_eqtl(tr_tok, target_format)
-                val_dataset   = create_dataset_eqtl(va_tok, target_format)
                 test_dataset  = create_dataset_eqtl(te_tok, target_format) if te_tok else None
     
 
@@ -538,7 +532,6 @@ def main():
                 except Exception:
                     pass
                 test_results = trainer.predict(test_dataset=test_dataset)
-                test_dl = trainer.get_test_dataloader(test_dataset)
                 with open(f"{save_path}/test_results.json", "w") as fj:
                     json.dump(to_jsonable(test_results.metrics), fj, indent=2)
                 print(json.dumps({k: float(v) if hasattr(v, 'item') else v for k, v in test_results.metrics.items()},
@@ -554,11 +547,11 @@ def main():
             final_save = os.path.join(args.save_path, args.antibiotic)
             with open(os.path.join(final_save, "Memory_and_Time.txt"), "w") as f:
                 f.write(f"Elapsed time        : {elapsed:.1f} s  ({elapsed / 60:.1f} min)\n")
-                f.write(f"\n--- CPU Memory (tracemalloc) ---\n")
+                f.write("\n--- CPU Memory (tracemalloc) ---\n")
                 f.write(f"Current             : {current_mem / 1024 ** 2:.1f} MB\n")
                 f.write(f"Peak                : {peak_mem / 1024 ** 2:.1f} MB\n")
     
-                f.write(f"\n--- CUDA Memory ---\n")
+                f.write("\n--- CUDA Memory ---\n")
                 if not cuda_stats["cuda_available"]:
                     f.write("CUDA not available\n")
                 else:

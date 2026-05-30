@@ -1,6 +1,6 @@
 from __future__ import annotations
 import os
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 from tqdm import tqdm
 from transformers import PreTrainedTokenizerFast
 from tokenizers import Tokenizer

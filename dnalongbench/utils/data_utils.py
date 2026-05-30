@@ -109,8 +109,6 @@ def tokenize_sets(tokenizer_manager, prepped_seqs, prepped_labels, seq_ids, gene
     encoded_sequences = []
     sequence_genes = []
     gene_mapping = {}
-    token_to_gene = {} 
-
     unk = 0
     non_unk = 0
 

@@ -1,11 +1,9 @@
 from sklearn.metrics import (
     f1_score, accuracy_score, hamming_loss, jaccard_score,
     precision_score, recall_score, roc_auc_score, confusion_matrix,
-    classification_report, precision_recall_curve, auc, average_precision_score
+    classification_report, average_precision_score
 )
 import numpy as np
-
-import math
 
 
 
@@ -92,7 +90,7 @@ class MetricsCalculator:
         logger.log(f"Validation Accuracy: {accuracy:.4f}")
         logger.log(f"Validation F1 Score: {f1:.4f}")
         logger.log(f"Precision: {precision:.4f} Recall: {recall:.4f}")
-        if type(best_threshold) == str:
+        if isinstance(best_threshold, str):
             logger.log(f"Threshold: {best_threshold:.2f}")
         else:
             logger.log(f"Threshold: {best_threshold}")

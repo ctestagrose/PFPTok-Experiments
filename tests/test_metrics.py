@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 from curated_genes.utils.metric_calculator import MetricsCalculator
 

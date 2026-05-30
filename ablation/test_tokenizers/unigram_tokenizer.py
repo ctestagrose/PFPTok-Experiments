@@ -1,5 +1,3 @@
-###CHUNKED BELOW###
-
 import json
 import os
 import random
@@ -7,7 +5,6 @@ import tempfile
 from collections import Counter
 from typing import List, Dict, Tuple, Optional
 import sentencepiece as spm
-from transformers import PreTrainedTokenizerFast
 from tqdm import tqdm
 
 class TokenizerManagerUnigram:
@@ -90,7 +87,7 @@ class TokenizerManagerUnigram:
             else:
                 raise ValueError(f"Sequence {idx} has unexpected type: {type(seq)}")
 
-        print(f"\n📊 Data preparation summary:")
+        print("\nData preparation summary:")
         print(f"  Input sequences: {len(sequences)}")
         print(f"  Total base pairs: {total_bp:,}")
         print(f"  Long sequences (>{self.chunk_size} bp): {long_sequences_found}")
@@ -101,7 +98,7 @@ class TokenizerManagerUnigram:
             expected_ratio = total_chunks / long_sequences_found
             print(f"  Avg chunks per long sequence: {expected_ratio:.1f}")
             if expected_ratio < 2:
-                print(f"WARNING: Expected more chunks! Check chunking logic.")
+                print("WARNING: Expected more chunks! Check chunking logic.")
 
         if len(training_data) == 0:
             raise ValueError("No training data! All sequences were filtered out.")
@@ -135,7 +132,7 @@ class TokenizerManagerUnigram:
                     print(f"Using input_sentence_size={input_sentence_size_param}")
 
                 # Train SentencePiece
-                print(f"Training SentencePiece (this may take 2-4 minutes)...")
+                print("Training SentencePiece (this may take 2-4 minutes)...")
                 spm.SentencePieceTrainer.train(
                     input=temp_file,
                     model_prefix=model_prefix,

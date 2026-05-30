@@ -1,8 +1,6 @@
-import hashlib
 import random
 from collections import Counter
-from itertools import product
-from typing import Literal, List
+from typing import List
 
 from tokenizers import Tokenizer, models, pre_tokenizers
 from tqdm import tqdm

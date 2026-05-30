@@ -5,7 +5,6 @@ import tempfile
 from collections import Counter
 from typing import Dict
 import sentencepiece as spm
-from transformers import PreTrainedTokenizerFast
 from tqdm import tqdm
 
 class TokenizerManagerUnigram:

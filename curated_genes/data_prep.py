@@ -153,7 +153,10 @@ class DataPreparer:
             if not _label_is_valid(label):
                 continue
 
-            clean_sequence, genes_in_isolate = _read_sequences_for_file(fasta_path, self.args, target_format, self.gene_manager)
+            result = _read_sequences_for_file(fasta_path, self.args, target_format, self.gene_manager)
+            if result is None:
+                continue
+            clean_sequence, genes_in_isolate = result
             if not clean_sequence or not clean_sequence[0]:
                 continue
 
@@ -169,9 +172,9 @@ class DataPreparer:
             isolate = _infer_isolate_id(fasta_path, self.args)
             if isolate not in targets:
                 continue
-            clean_sequence, _ = _read_sequences_for_file(fasta_path, self.args, target_format, self.gene_manager)
-            if clean_sequence and clean_sequence[0]:
-                full_set_seqs.append(clean_sequence)
+            result = _read_sequences_for_file(fasta_path, self.args, target_format, self.gene_manager)
+            if result is not None and result[0] and result[0][0]:
+                full_set_seqs.append(result[0])
 
         zipped_data = list(zip(sequences, labels, seq_ids, genes_list))
         return zipped_data, full_set_seqs

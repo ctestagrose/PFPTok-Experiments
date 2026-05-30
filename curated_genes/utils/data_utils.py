@@ -56,11 +56,6 @@ def tokenize_sets(tokenizer_manager, prepped_seqs, prepped_labels, seq_ids, gene
                     gene_mapping[gene].append(token_id)
 
     else:  # PFP tokenizer
-        p_base = getattr(args, 'p_base', 0.15)
-        strategy = getattr(args, 'fallback_strategy', 'proportional')
-        alpha = getattr(args, 'fallback_alpha', 0.7)
-        disable_fallback = getattr(args, 'disable_pfp_fallback', False)
-
         for index, sequence in enumerate(tqdm(prepped_seqs, desc=f"Tokenizing {split} data with PFP")):
             genes_in_this_isolate = genes_list[index]
 

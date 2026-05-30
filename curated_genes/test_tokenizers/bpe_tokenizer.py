@@ -2,7 +2,7 @@ import json
 import os
 import random
 from collections import Counter
-from typing import List, Dict
+from typing import Dict
 from tokenizers import Tokenizer, models, trainers, pre_tokenizers
 from tokenizers.processors import TemplateProcessing
 from transformers import PreTrainedTokenizerFast

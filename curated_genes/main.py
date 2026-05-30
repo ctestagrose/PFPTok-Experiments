@@ -202,7 +202,6 @@ def load_test_data(args, gene_manager, sequence_processor, tokenizer_manager):
 
 # Tokenization and Wrapping
 def setup_tokenizer_and_wrap(tokenizer_manager, full_set_seqs, w, p, args, save_path):
-    sequence_processor = SequenceProcessor(args.Kmer_Size, args.stride)
     print(f"Setting up {args.tokenizer_type.upper()} tokenizer...")
 
     if args.tokenizer_type == 'bpe':

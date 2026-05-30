@@ -72,7 +72,6 @@ class SequenceProcessor:
         minimizer_size = 0
         
         for item in full_set_seqs:
-            prepped_item = []
             for sequence in item:
                 prepped_seq = []
                 if "N" in sequence:

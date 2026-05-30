@@ -1,6 +1,6 @@
 {
-    "sequence_dir": "../sample_data/ablation_and_whole_genome_sample_data/train",
-    "test_sequence_dir": "../sample_data/ablation_and_whole_genome_sample_data/test",
+    "sequence_dir": "../sample_data/curated_genes_sample_data/train",
+    "test_sequence_dir": "../sample_data/curated_genes_sample_data/test",
     "gene_file": "./config/gene_configs/genes_important.json",
     "target_file": "./data/cryptic_targets_all.json",
     "num_epochs": 10,
@@ -15,8 +15,8 @@
     "tokenizer_type": "pfp",
     "bpe_vocab_size": 100000,
     "bpe_min_frequency": 5,
-    "use_scaffolds": true,
+    "use_scaffolds": false,
     "scaffold_concat": false,
-    "pfp_w": 100,
-    "pfp_p": 4096
+    "pfp_w": 6,
+    "pfp_p": 117
 }

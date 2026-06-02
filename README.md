@@ -58,7 +58,9 @@ conda activate pfp-tok
 ```bash
 git clone https://github.com/ctestagrose/PFPTok-Experiments.git
 cd PFPTok-Experiments
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+pip install .
 ```
 
 > **Note:** `requirements.txt` was generated from an HPC environment and includes CUDA-specific packages (`+cu128` version suffixes). You may need to install PyTorch separately for your CUDA version (see [pytorch.org](https://pytorch.org/get-started/locally/)) and strip those suffixes before installing on CPU-only machines.

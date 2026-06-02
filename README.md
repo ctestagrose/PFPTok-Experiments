@@ -44,7 +44,7 @@ PFPTok-Experiments/
 
 ## Installation
 
-**Recommended — conda environment (includes PyTorch + CUDA):**
+**Recommended - conda environment (includes PyTorch + CUDA):**
 
 ```bash
 git clone https://github.com/ctestagrose/PFPTok-Experiments.git
@@ -53,7 +53,7 @@ conda env create -f environment.yml
 conda activate pfp-tok
 ```
 
-**Alternative — pip only:**
+**Alternative - pip only:**
 
 ```bash
 git clone https://github.com/ctestagrose/PFPTok-Experiments.git

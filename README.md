@@ -85,7 +85,7 @@ Each experiment reads its paths from a dedicated config file or shell script. Th
 | DNALongBench (interactive) | `dnalongbench/submit_non_slurm.sh` (top of file) | `JSON_ROOT`, `SAVE_ROOT_UNORDERED`, `SAVE_ROOT_ORDERED`, `TASK`, `MODEL_TYPE` |
 | DNALongBench (SLURM) | `dnalongbench/submit_slurm.sh` (top of file) | Same as above, plus SBATCH directives |
 
-### Curated genes — `train_config.json`
+### Curated genes - `train_config.json`
 
 ```json
 {
@@ -102,7 +102,7 @@ Set `antibiotic` to one of: `RIF`, `INH`, `EMB`, `RFB`, `LEV`, `MXF`, `KAN`, `AM
 
 For whole-genome mode, also set `"use_scaffolds": true` and `"use_gene_file": false`.
 
-### Ablation — `run_ablation.sh`
+### Ablation - `run_ablation.sh`
 
 Edit the three lines at the top of the file:
 
@@ -112,7 +112,7 @@ TEST_SEQUENCE_DIR="/path/to/your/test_isolates"
 TARGET_FILE="/path/to/cryptic_targets_all.json"
 ```
 
-### DNALongBench — `submit_non_slurm.sh` / `submit_slurm.sh`
+### DNALongBench - `submit_non_slurm.sh` / `submit_slurm.sh`
 
 Edit the variables at the top of the script:
 

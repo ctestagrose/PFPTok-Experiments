@@ -216,9 +216,10 @@ Results are saved as JSON, CSV, and a summary text file under `ablation_results/
 
 ### 4. DNALongBench Experiments
 
-Evaluation on the [DNALongBench](https://github.com/rattlesnakey/DNALongBench) benchmark, covering the eQTL (expression quantitative trait loci) and ETGP (enhancer-target gene prediction) tasks. Supports both PFP-tokenized BERT and HyenaDNA architectures, with ordered and unordered tokenization variants.
+Evaluation on the [DNALongBench](https://github.com/wenduocheng/DNALongBench) benchmark, covering the eQTL (expression quantitative trait loci) and ETGP (enhancer-target gene prediction) tasks. Supports both PFP-tokenized BERT and HyenaDNA architectures, with ordered and unordered tokenization variants.
 
 > **Note:** It is highly recommended to run these experiments with access to a GPU.
+> 
 
 
 - **Code:** `dnalongbench/`

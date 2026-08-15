@@ -44,7 +44,7 @@ PFPTok-Experiments/
 
 ## Installation
 
-**Recommended — conda environment (includes PyTorch + CUDA):**
+**Recommended - conda environment (includes PyTorch + CUDA):**
 
 ```bash
 git clone https://github.com/ctestagrose/PFPTok-Experiments.git
@@ -53,12 +53,14 @@ conda env create -f environment.yml
 conda activate pfp-tok
 ```
 
-**Alternative — pip only:**
+**Alternative - pip only:**
 
 ```bash
 git clone https://github.com/ctestagrose/PFPTok-Experiments.git
 cd PFPTok-Experiments
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+pip install - requirements.txt
 ```
 
 > **Note:** `requirements.txt` was generated from an HPC environment and includes CUDA-specific packages (`+cu128` version suffixes). You may need to install PyTorch separately for your CUDA version (see [pytorch.org](https://pytorch.org/get-started/locally/)) and strip those suffixes before installing on CPU-only machines.
@@ -83,7 +85,7 @@ Each experiment reads its paths from a dedicated config file or shell script. Th
 | DNALongBench (interactive) | `dnalongbench/submit_non_slurm.sh` (top of file) | `JSON_ROOT`, `SAVE_ROOT_UNORDERED`, `SAVE_ROOT_ORDERED`, `TASK`, `MODEL_TYPE` |
 | DNALongBench (SLURM) | `dnalongbench/submit_slurm.sh` (top of file) | Same as above, plus SBATCH directives |
 
-### Curated genes — `train_config.json`
+### Curated genes - `train_config.json`
 
 ```json
 {
@@ -100,7 +102,7 @@ Set `antibiotic` to one of: `RIF`, `INH`, `EMB`, `RFB`, `LEV`, `MXF`, `KAN`, `AM
 
 For whole-genome mode, also set `"use_scaffolds": true` and `"use_gene_file": false`.
 
-### Ablation — `run_ablation.sh`
+### Ablation - `run_ablation.sh`
 
 Edit the three lines at the top of the file:
 
@@ -110,7 +112,7 @@ TEST_SEQUENCE_DIR="/path/to/your/test_isolates"
 TARGET_FILE="/path/to/cryptic_targets_all.json"
 ```
 
-### DNALongBench — `submit_non_slurm.sh` / `submit_slurm.sh`
+### DNALongBench - `submit_non_slurm.sh` / `submit_slurm.sh`
 
 Edit the variables at the top of the script:
 
@@ -214,9 +216,10 @@ Results are saved as JSON, CSV, and a summary text file under `ablation_results/
 
 ### 4. DNALongBench Experiments
 
-Evaluation on the [DNALongBench](https://github.com/rattlesnakey/DNALongBench) benchmark, covering the eQTL (expression quantitative trait loci) and ETGP (enhancer-target gene prediction) tasks. Supports both PFP-tokenized BERT and HyenaDNA architectures, with ordered and unordered tokenization variants.
+Evaluation on the [DNALongBench](https://github.com/wenduocheng/DNALongBench) benchmark, covering the eQTL (expression quantitative trait loci) and ETGP (enhancer-target gene prediction) tasks. Supports both PFP-tokenized BERT and HyenaDNA architectures, with ordered and unordered tokenization variants.
 
 > **Note:** It is highly recommended to run these experiments with access to a GPU.
+> 
 
 
 - **Code:** `dnalongbench/`

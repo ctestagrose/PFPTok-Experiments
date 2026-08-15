@@ -7,17 +7,17 @@ channels:
 dependencies:
   - python=3.11
   - pip
-  - numpy
-  - pandas
-  - psutil
-  - pytorch
-  - torchvision
-  - torchaudio
-  - pytorch-cuda=12.1
-  - transformers
-  - tokenizers
-  - scikit-learn
-  - scipy
-  - tqdm
-  - einops
-  - accelerate
+  - numpy=1.26.4
+  - pandas=2.3.1
+  - psutil=7.0.0
+  - pytorch=2.7.1
+  - torchvision=0.22.1
+  - torchaudio=2.7.1
+  - pytorch-cuda=12.8
+  - transformers=4.53.3
+  - tokenizers=0.21.2
+  - scikit-learn=1.5.2
+  - scipy=1.16.1
+  - tqdm=4.67.1
+  - einops=0.8.1
+  - accelerate=1.9.0

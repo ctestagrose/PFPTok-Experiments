@@ -58,3 +58,4 @@ saved_tokenizers/
 *.out
 *.err
 slurm-*.out
+dnalongbench/smoke_test.sh

@@ -118,3 +118,32 @@ def tokenize_sequences_hyena(
 
     return encoded, (unk, non_unk)
 
+
+def tokenize_sequences_hyena_eqtl(
+    prepped_zipped: List[Tuple],
+    tokenizer: PreTrainedTokenizerFast,
+    max_length: int = 450_000,
+    truncation: bool = True,
+) -> Tuple[List[Tuple], Tuple[int, int]]:
+    encoded = []
+    unk_id = tokenizer.unk_token_id
+    unk = 0
+    non_unk = 0
+
+    for seq_ref, seq_alt, label, seq_id in tqdm(
+        prepped_zipped, desc="Tokenizing eQTL pairs (HyenaDNA)"
+    ):
+        ref_ids = encode_single_sequence(seq_ref, tokenizer, max_length, truncation)
+        alt_ids = encode_single_sequence(seq_alt, tokenizer, max_length, truncation)
+
+        for ids in (ref_ids, alt_ids):
+            for t in ids:
+                if t == unk_id:
+                    unk += 1
+                else:
+                    non_unk += 1
+
+        gene_map = [-100] * len(ref_ids)
+        encoded.append(([ref_ids], [alt_ids], label, seq_id, [gene_map]))
+
+    return encoded, (unk, non_unk)

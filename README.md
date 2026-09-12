@@ -17,28 +17,31 @@ PFPTok-Experiments/
 │   │   ├── model_configs/       # BERT architecture configs
 │   │   └── train_config.json    # Default training config
 │   ├── models/                  # BERT classifier implementation
-│   ├── tokenizers/              # PFP, BPE, Unigram tokenizer implementations
+│   ├── test_tokenizers/         # PFP, BPE, Unigram tokenizer implementations
 │   ├── utils/                   # Data loading, dataset, metrics, loss
 │   └── main.py                  # Entry point
 ├── ablation/                    # Hyperparameter sweeps for all three tokenizers
-│   ├── tokenizers/              # PFP, BPE, Unigram tokenizer implementations
+│   ├── test_tokenizers/         # PFP, BPE, Unigram tokenizer implementations
 │   ├── utils/                   # Data loading and sequence processing
 │   ├── main.py                  # Ablation entry point
 │   └── run_ablation.sh          # Configurable sweep launcher
 ├── dnalongbench/                # DNALongBench experiments (eQTL, ETGP)
 │   ├── config/model_configs/    # BERT architecture configs
-│   ├── models/                  # BERT and HyenaDNA implementations
-│   ├── utils/                   # Data utils, tokenizers, metrics
+│   ├── models/                  # BERT, HyenaDNA, Caduceus, and NTv3 implementations
+│   ├── utils/                   # Data utils, tokenizers (PFP, Hyena, Caduceus, NTv3), metrics
+│   ├── benchmark_efficiency.py  # PFPTok vs NTv3 efficiency comparison
 │   ├── main.py                  # Entry point
 │   ├── submit_slurm.sh          # SLURM job script
 │   └── submit_non_slurm.sh      # Local/interactive launch script
 ├── sample_data/                 # Example MTB isolates for quick testing
 │   ├── curated_genes_sample_data/
-│   └── abalation_and_whole_genome_sample_data/
+│   ├── ablation_and_whole_genome_sample_data/
+│   └── cryptic_targets_all.json
 ├── tests/                       # pytest test suite
 ├── requirements.txt
 ├── requirements-test.txt        # Minimal deps for running tests (no GPU required)
 ├── environment.yml
+├── pyproject.toml
 └── LICENSE                      # MIT
 ```
 
@@ -121,7 +124,7 @@ JSON_ROOT="/path/to/your/DNALongBench/data"   # folder containing per-tissue spl
 SAVE_ROOT_UNORDERED="./runs/eqtl_unordered"
 SAVE_ROOT_ORDERED="./runs/eqtl_ordered"
 TASK="eQTL"          # or ETGP
-MODEL_TYPE="bert"    # or hyena
+MODEL_TYPE="bert"    # bert, hyena, or caduceus
 ```
 
 For SLURM, also fill in your cluster account, partition, and email in the `#SBATCH` header.
@@ -216,11 +219,9 @@ Results are saved as JSON, CSV, and a summary text file under `ablation_results/
 
 ### 4. DNALongBench Experiments
 
-Evaluation on the [DNALongBench](https://github.com/wenduocheng/DNALongBench) benchmark, covering the eQTL (expression quantitative trait loci) and ETGP (enhancer-target gene prediction) tasks. Supports both PFP-tokenized BERT and HyenaDNA architectures, with ordered and unordered tokenization variants.
+Evaluation on the [DNALongBench](https://github.com/wenduocheng/DNALongBench) benchmark, covering the eQTL (expression quantitative trait loci) and ETGP (enhancer-target gene prediction) tasks. We compare three architectures: PFPTok+BERT, HyenaDNA, and Caduceus, with ordered and unordered tokenization variants for BERT.
 
 > **Note:** It is highly recommended to run these experiments with access to a GPU.
-> 
-
 
 - **Code:** `dnalongbench/`
 - **Data:** DNALongBench datasets should be preprocessed into JSON splits (train/validation/test) following the format expected by `--use_json_dataset`.
@@ -242,6 +243,27 @@ cd dnalongbench
 bash submit_non_slurm.sh
 ```
 
-To run with HyenaDNA instead, set `MODEL_TYPE="hyena"` at the top of the script before running.
+Set `MODEL_TYPE` at the top of the script to `bert`, `hyena`, or `caduceus` to select the architecture.
 
 The eQTL task runs across 9 tissue splits: Adipose Subcutaneous, Artery Tibial, Cultured Fibroblasts, Muscle Skeletal, Nerve Tibial, Skin (Not Sun Exposed), Skin (Sun Exposed), Thyroid, and Whole Blood.
+
+**Efficiency benchmark:**
+
+Targeted efficiency comparison between PFPTok+BERT and NTv3. The two ends of the tokenization spectrum (compressed dictionary tokens vs. raw nucleotide-resolution input with a U-Net backbone). `dnalongbench/benchmark_efficiency.py` runs both models through an identical training loop (same loss, optimizer, and padding) and records wall-clock time per epoch, peak GPU memory allocation, and throughput. Run both models on the **same GPU in one session**.
+
+```bash
+cd dnalongbench
+
+# PFPTok+BERT
+python benchmark_efficiency.py --model bert \
+    --json_path /path/to/ETGP_Splits/ETGP \
+    --model_config ./config/model_configs/base_bert/base_config_binary.json \
+    --batch_size 128 --epochs 2 --bf16
+
+# NTv3 (nucleotide-resolution baseline; use batch_size 1)
+python benchmark_efficiency.py --model ntv3 \
+    --json_path /path/to/ETGP_Splits/ETGP \
+    --batch_size 1 --epochs 2 --bf16
+```
+
+Results are appended to `efficiency_results.json` in the working directory. Each entry records model name, GPU, parameter count, mean tokens per sequence, batch size, tokenization time, per-epoch wall-clock time, samples/second, and peak GPU memory.

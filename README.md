@@ -1,6 +1,6 @@
 # PFPTok
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![CI](https://github.com/ctestagrose/PFPTok-Experiments/actions/workflows/ci.yml/badge.svg)](https://github.com/ctestagrose/PFPTok-Experiments/actions/workflows/ci.yml)
 
@@ -42,7 +42,7 @@ PFPTok-Experiments/
 ├── requirements-test.txt        # Minimal deps for running tests (no GPU required)
 ├── environment.yml
 ├── pyproject.toml
-└── LICENSE                      # MIT
+└── LICENSE                      # GPL-3.0
 ```
 
 ## Installation
@@ -267,3 +267,7 @@ python benchmark_efficiency.py --model ntv3 \
 ```
 
 Results are appended to `efficiency_results.json` in the working directory. Each entry records model name, GPU, parameter count, mean tokens per sequence, batch size, tokenization time, per-epoch wall-clock time, samples/second, and peak GPU memory.
+
+## License
+This repository is released under the [GNU General Public License v3.0](LICENSE) (GPL-3.0).
+

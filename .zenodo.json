@@ -1,0 +1,11 @@
+{
+  "title": "PFPTok-Experiments: code for the PFPTok experiments",
+  "description": "Code to reproduce the experiments in Testagrose, Varki and Boucher, \"PFPTok enables efficient long-context genomic sequence modeling\" (Genome Biology), including MTB antimicrobial resistance classification and DNALongBench benchmarking against HyenaDNA, Caduceus and NTv3.",
+  "upload_type": "software",
+  "license": "GPL-3.0-only",
+  "creators": [
+    { "name": "Testagrose, Conrad", "affiliation": "University of Florida" },
+    { "name": "Varki, Rahul", "affiliation": "University of Florida" },
+    { "name": "Boucher, Christina", "affiliation": "University of Florida" }
+  ]
+}
